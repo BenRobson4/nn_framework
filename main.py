@@ -114,10 +114,10 @@ if __name__ == "__main__":
     loss_function = CustomLossTemplate(debug=debug)
 
     # Train a new model
-    #Main.train_new_model(model_name, data_preparer, loss_function, tickers, data, epochs=25, debug=debug)
+    Main.train_new_model(model_name, data_preparer, loss_function, tickers, data, epochs=5, debug=debug)
 
     # Predict using the trained model
-    model_path = f"./nn_take_2/models/test_model/finished/{datetime.datetime.today().date()}.pth"
+    model_path = f"./models/test_model/finished/{datetime.datetime.today().date()}.pth"
     predictions = Main.predict(model_path, data, debug=True)
     prepared_data, ticker_map = data_preparer.prepare_features(data)
     for ticker in tickers:

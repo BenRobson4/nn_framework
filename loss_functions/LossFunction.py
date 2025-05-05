@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 class LossFunction(nn.Module):
     def __init__(self, debug=False):
         super().__init__()
+        self.num_targets = 0
         self.num_targets, self.targets = self.get_targets()
         self.required_params = self.required_parameters()
         self.logger = logging.getLogger(__name__)

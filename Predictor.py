@@ -60,10 +60,10 @@ class Predictor:
         if isinstance(input_shape, int):
             raise ValueError(f"Expected tuple or list for input_shape, got int: {input_shape}")
         
-        if not os.path.exists(f'./nn_take_2/models/{self.name}'):
-            os.makedirs(f'./nn_take_2/models/{self.name}')
-            os.makedirs(f'./nn_take_2/models/{self.name}/checkpoints')
-            os.makedirs(f'./nn_take_2/models/{self.name}/finished')
+        if not os.path.exists(f'./models/{self.name}'):
+            os.makedirs(f'./models/{self.name}')
+            os.makedirs(f'./models/{self.name}/checkpoints')
+            os.makedirs(f'./models/{self.name}/finished')
         
         try:
             input_size = input_shape[2]  # Number of features
@@ -140,7 +140,8 @@ class Predictor:
         
         # Rebuild model with correct input size
         num_features, _ = self.data_preparer.get_features()
-        self.model = self.build_model(input_shape=(None, self.sequence_length, num_features))
+        num_outputs, _ = self.loss_function.get_targets()
+        self.model = self.build_model(input_shape=(None, self.sequence_length, num_features, num_outputs))
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
         
@@ -220,9 +221,9 @@ class Predictor:
                 self.logger.info(f'Epoch [{epoch+1}/{epochs}], Loss: {to_x_sig_figs(total_loss, 5)}, Timestamp: {timestamp}')
             
             if (epoch + 1) % 10 == 0:  # Save every 10 epochs
-               self.save_model(f'./nn_take_2/models/{self.name}/checkpoints/{self.name}_checkpoint_epoch_{epoch+1}_{timestamp}.pth')
+               self.save_model(f'./models/{self.name}/checkpoints/{self.name}_checkpoint_epoch_{epoch+1}_{timestamp}.pth')
         
-        self.save_model(f'./nn_take_2/models/{self.name}/finished/{datetime.datetime.today().date()}.pth')
+        self.save_model(f'./models/{self.name}/finished/{datetime.datetime.today().date()}.pth')
         self.logger.info(f"Training finished and model saved to /models/{self.name}/finished/{datetime.datetime.today().date()}")
 
     def predict(self, X, ticker_indices, ticker_map):
